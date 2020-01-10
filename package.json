@@ -1,0 +1,17 @@
+{
+  "name": "dbbackend",
+  "version": "1.0.0",
+  "description": "db backend for rmc dashboard",
+  "main": "dbbackend.js",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "mqtt": "^2.18.8",
+    "nodemon": "^2.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
