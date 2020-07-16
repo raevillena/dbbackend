@@ -49,7 +49,7 @@ const mqttConfig = {
   clientId: 'EDMOS_' + Math.random().toString(16).substr(2, 8)
 }
 //topic config for the commands
-const console_topic = 'db/console'
+const console_topic = 'esp32/d150/db/console'
 
 //-----------------------------------------------------------------------
 //INITIATE CONNECTIONS *************************************************
@@ -100,23 +100,43 @@ client.on('connect', function () {
   client.publish(console_topic, "MQTT Connection established")
 })
 
-
 //mqtt payload arival event //command arrival event as well
 client.on('message', function (mtopic, message) {
+
   //seperate message based on topic 
   switch (mtopic) {
     //case for console commands
     case console_topic:
       //refresh the active topic list and re subscribe
-      if (message.toString() === 'reset') {
-        //log console command reset
-        logger.log('info', 'Reset Records invoked via MQTT command');
+      if (message.toString() === 'stop') {
+        //log console command stop
+
+        //unsubscribe to topics
+        activeRecords.map(e => {
+          client.unsubscribe(e.topic, function (err) {
+            if (!err) {
+              //log query error
+              logger.log('info', 'Subscribed to Record Topic: ' + e.topic);
+            } else {
+              //log query error
+              logger.log('error', err);
+            }
+          })
+        })
+        logger.log('info', 'Stop records invoked via MQTT command');
+
+
+      } else if (message.toString() === 'start') {
+        //log console command start
         getActive()
+        logger.log('info', 'Start records invoked via MQTT command');
       }
       //insert other command handler
       break
     default:
+
       //format the data to be saved
+      console.log(message.toString())
       var payload = JSON.stringify([new Date().getTime(), ...JSON.parse(message.toString())])
       //extract who is the user and what recordID is using the topic assigned and use as parameter in saving data
       user = activeRecords.find(({ topic }) => topic === mtopic);
@@ -165,7 +185,8 @@ function getActive() {
     } else {
       //set res to the variable for use of other functions
       activeRecords = results
-      //suscribe to all active topics
+
+      //subscribe all topics
       results.map(e => {
         client.subscribe(e.topic, function (err) {
           if (!err) {
