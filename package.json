@@ -4,7 +4,7 @@
   "description": "db backend for rmc dashboard",
   "main": "dbbackend_one.js",
   "dependencies": {
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mqtt": "^2.18.8",
     "mysql": "^2.18.1",
     "winston": "^3.2.1"
